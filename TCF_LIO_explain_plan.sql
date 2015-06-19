@@ -1,45 +1,47 @@
- -- script by Kyle Hailey
+-- script by Kyle Hailey
+--  see http://datavirtualizer.com/power-of-display_cursor/
+-- ELAPSED is incremental not the obfuscated default cumulative
+-- LIO_RATIO  number of buffers accessed per row returned. Ideally 1 buffer or less is accessed per row returned.  
+-- Enter value for sql_id: g2w9n4gksyys6
+--     old  59:     stats.sql_id='&v_sql_id'  and
+--     new  59:     stats.sql_id='g2w9n4gksyys6'  and
 -- 
- -- Enter value for sql_id: g2w9n4gksyys6
- --     old  59:     stats.sql_id='&v_sql_id'  and
- --     new  59:     stats.sql_id='g2w9n4gksyys6'  and
- -- 
- --      CN   ELAPSED    LIO_RATIO TCF_GRAPH   E_ROWS       A_ROWS operation
- --     --- ------------ --------- ------ ------------ ------------ ------------------------------------------------------------
- --       0            0         0                                1 SELECT STATEMENT
- --            5,720,456         0                   1            1  HASH GROUP BY
- --               29,711         0                            1,909   NESTED LOOPS
- --                    0         0  +++              1        1,909    NESTED LOOPS
- --            1,969,304         0  +++              1        1,909     NESTED LOOPS
- --                    0         0  +++              1        2,027      NESTED LOOPS
- --            7,939,649         0  +++              1        1,656       NESTED LOOPS
- --              716,054         0  +++              1        1,657        NESTED LOOPS
- --              270,201         0  ++              39       23,171         HASH JOIN
- --                   23         0                   5            1          JOIN FILTER CREATE :BF0000
- --                   31         1                   5            1           TABLE ACCESS BY INDEX ROWID PS_PAY_CALENDAR
- --                   14         2                   5            1            INDEX RANGE SCAN PS0PAY_CALENDAR
- --              141,467         0              18,503       23,171          VIEW  VW_SQ_1
- --            3,032,120         0              18,503       23,171           HASH GROUP BY
- --              152,564         0             163,420       33,020            JOIN FILTER USE :BF0000
- --              407,746         0             163,420       33,020             MERGE JOIN
- --                   55         0                   5            1              SORT JOIN
- --                   12         2                   5            1               INDEX RANGE SCAN PS0PAY_CALENDAR
- --               79,435         0              40,000       33,020              SORT JOIN
- --              119,852         0              40,000       40,000               INDEX FAST FULL SCAN WB_JOB
- --            2,959,031        13  -           23,171        1,657         TABLE ACCESS BY INDEX ROWID WB_JOB
- --              944,887         1              23,171       23,174          INDEX RANGE SCAN WB_JOB
- --              102,650         0               1,657        1,656        VIEW PUSHED PREDICATE  VW_SQ_2
- --               73,769         0               1,657        1,657         SORT AGGREGATE
- --               25,617         0               1,657        1,657          FIRST ROW
- --              225,497         1               1,657        1,657           INDEX RANGE SCAN (MIN/MAX) WB_JOB
- --              357,872         0               3,312        2,027       TABLE ACCESS BY INDEX ROWID WB_RETROPAY_EARNS
- --            3,655,774         1               3,312        2,027        INDEX RANGE SCAN WB_RETROPAY_EARNS_IDX1
- --              199,884         0               2,027        1,909      TABLE ACCESS BY INDEX ROWID PS_RETROPAY_RQST
- --              317,793         1               2,027        1,909       INDEX RANGE SCAN PS_RETROPAY_RQST
- --               71,534         0               1,909        1,909     INDEX RANGE SCAN PS#RETROPAYPGM_TBL
- --               18,396         0               1,909        1,909    TABLE ACCESS BY INDEX ROWID PS_RETROPAYPGM_TBL
- --               
- --               
+--      CN   ELAPSED    LIO_RATIO TCF_GRAPH   E_ROWS       A_ROWS operation
+--     --- ------------ --------- ------ ------------ ------------ ------------------------------------------------------------
+--       0            0         0                                1 SELECT STATEMENT
+--            5,720,456         0                   1            1  HASH GROUP BY
+--               29,711         0                            1,909   NESTED LOOPS
+--                    0         0  +++              1        1,909    NESTED LOOPS
+--            1,969,304         0  +++              1        1,909     NESTED LOOPS
+--                    0         0  +++              1        2,027      NESTED LOOPS
+--            7,939,649         0  +++              1        1,656       NESTED LOOPS
+--              716,054         0  +++              1        1,657        NESTED LOOPS
+--              270,201         0  ++              39       23,171         HASH JOIN
+--                   23         0                   5            1          JOIN FILTER CREATE :BF0000
+--                   31         1                   5            1           TABLE ACCESS BY INDEX ROWID PS_PAY_CALENDAR
+--                   14         2                   5            1            INDEX RANGE SCAN PS0PAY_CALENDAR
+--              141,467         0              18,503       23,171          VIEW  VW_SQ_1
+--            3,032,120         0              18,503       23,171           HASH GROUP BY
+--              152,564         0             163,420       33,020            JOIN FILTER USE :BF0000
+--              407,746         0             163,420       33,020             MERGE JOIN
+--                   55         0                   5            1              SORT JOIN
+--                   12         2                   5            1               INDEX RANGE SCAN PS0PAY_CALENDAR
+--               79,435         0              40,000       33,020              SORT JOIN
+--              119,852         0              40,000       40,000               INDEX FAST FULL SCAN WB_JOB
+--            2,959,031        13  -           23,171        1,657         TABLE ACCESS BY INDEX ROWID WB_JOB
+--              944,887         1              23,171       23,174          INDEX RANGE SCAN WB_JOB
+--              102,650         0               1,657        1,656        VIEW PUSHED PREDICATE  VW_SQ_2
+--               73,769         0               1,657        1,657         SORT AGGREGATE
+--               25,617         0               1,657        1,657          FIRST ROW
+--              225,497         1               1,657        1,657           INDEX RANGE SCAN (MIN/MAX) WB_JOB
+--              357,872         0               3,312        2,027       TABLE ACCESS BY INDEX ROWID WB_RETROPAY_EARNS
+--            3,655,774         1               3,312        2,027        INDEX RANGE SCAN WB_RETROPAY_EARNS_IDX1
+--              199,884         0               2,027        1,909      TABLE ACCESS BY INDEX ROWID PS_RETROPAY_RQST
+--              317,793         1               2,027        1,909       INDEX RANGE SCAN PS_RETROPAY_RQST
+--               71,534         0               1,909        1,909     INDEX RANGE SCAN PS#RETROPAYPGM_TBL
+--               18,396         0               1,909        1,909    TABLE ACCESS BY INDEX ROWID PS_RETROPAYPGM_TBL
+--               
+--               
 col cn format 99
 col ratio format 99
 col ratio1 format A6
