@@ -1,143 +1,119 @@
-/*
-SELECT order_line_data
-FROM           jl_customers cus
-    INNER JOIN jl_orders ord ON ord.id_customer = cus.id
-    INNER JOIN jl_order_lines orl ON orl.id_order = ord.id
-    INNER JOIN jl_products prd1 ON prd1.id = orl.id_product
-    INNER JOIN jl_suppliers sup1 ON sup1.id = prd1.id_supplier
-WHERE   cus.location = 'LONDON'
-    AND ord.date_placed BETWEEN sysdate - 7 
-                        AND     sysdate
-    AND sup1.location = 'LEEDS'
-    AND EXISTS ( SELECT  NULL
-                 FROM  jl_alternatives    alt
-                       INNER JOIN     jl_products prd2
-                         ON prd2.id = alt.id_product_sub
-                       INNER JOIN     jl_suppliers sup2 
-                         ON sup2.id = prd2.id_supplier
-                 WHERE    alt.id_product = prd1.id
-                       AND sup2.location != 'LEEDS' )
-	;
-*/
-
-drop table jl_customers;
+drop table customers;
 Create table
-    jl_customers 
+    customers
         (  id            number,
            location      varchar2(40) , /* 'LONDON' */
-	   customer_data varchar2(40),
-           CONSTRAINT 
-           jl_customers_pk  UNIQUE (id)
+           customer_data varchar2(40),
+           CONSTRAINT
+           customers_pk  UNIQUE (id)
         );
-insert into jl_customers select rownum, owner, object_name 
-from all_objects where rownum < 1000;
- update jl_customers set location='LONDON' where location='PUBLIC';
+insert into customers select rownum, owner, object_name from all_objects where rownum < 14577;
+update customers set location='LONDON' where location='PUBLIC' and rownum < 50 ;
+commit;
 
-drop table jl_orders;
+drop table jrders;
 Create table
-    jl_orders 
+    orders
         (  id            number,
            id_customer   number,
            date_placed   date,
-	       order_data    varchar2(40),
-           CONSTRAINT 
-           jl_orders_pk     UNIQUE (id)
+               order_data    varchar2(40),
+           CONSTRAINT
+           orders_pk     UNIQUE (id)
         );
+insert into orders select rownum, mod(rownum,998) +1 , (sysdate - dbms_random.value(0,14)), object_name from all_objects where rownum < 50998;
+insert into orders select id + 60000, id_customer, date_placed - 7, order_data from  orders;
+insert into orders select id + 120000, id_customer, date_placed - 7, order_data from  orders;
+commit;
 
-insert into jl_orders select
-       rownum,
-       mod(rownum,998) +1 ,
-       (sysdate - dbms_random.value(0,100)), 
-       object_name
-from all_objects where rownum < 10000;
-
-drop table jl_order_lines ;
+drop table order_lines ;
 Create table
-    jl_order_lines 
+    order_lines
         (  id_order        number,
            id_product      number,
-	   order_line_data varchar2(40)
+           order_line_data varchar2(40)
         );
-insert into jl_order_lines 
-select mod(rownum,10000),
-       mod(rownum,200)+1, /* don't include all products */
-       object_name
-from all_objects;
+insert into order_lines select mod(rownum,10000), mod(rownum,200)+1, /* don't include all products */ object_name from all_objects;
+insert into order_lines select * from order_lines;
+insert into order_lines select * from order_lines;
+insert into order_lines select * from order_lines;
+insert into order_lines select * from order_lines;
 commit;
-SELECT COUNT (*) FROM SYSTEM.JL_PRODUCTS prd1, SYSTEM.JL_ORDER_LINES orl
- WHERE prd1.id = orl.id_product
-;
-select max(id_product), min(id_product) from jl_order_lines;
 
-drop table jl_products ;
+drop table products ;
 Create table
-    jl_products 
+    products
         (  id              number,
            id_supplier     number,
-	   product_data    varchar2(40),
-           CONSTRAINT 
-           jl_products_pk UNIQUE (id)
-	);
+           product_data    varchar2(40),
+           CONSTRAINT
+           products_pk UNIQUE (id)
+        );
 
-insert into jl_products 
-select rownum,
-       mod(rownum,100),
-       object_name
-from all_objects where rownum < 2000;
+insert into products select rownum, mod(rownum,100), object_name from all_objects where rownum < 2000;
 
-drop table jl_suppliers ;
+rop table suppliers ;
 Create table
-    jl_suppliers 
+    suppliers
         (  id             number,
            location       varchar2(40),/* 'LEEDS' */
-	   supplier_data  varchar2(40),
-           CONSTRAINT 
-           jl_suppliers_pk UNIQUE (id)
+           supplier_data  varchar2(40),
+           CONSTRAINT
+           suppliers_pk UNIQUE (id)
         );
+insert into suppliers select rownum, owner, object_name from all_objects where rownum < 100;
+update suppliers set location='LEEDS' where rownum < 50;
+commit;
 
-insert into jl_suppliers 
-select rownum,
-       owner,
-       object_name
-from all_objects where rownum <100;
- update jl_suppliers set location='LEEDS' where rownum < 10;
-
-
-drop table jl_alternatives   ; 
+drop table alternatives   ;
 Create table
-    jl_alternatives    
-        (  
-	   id_product   number,
-	   id_product_sub   number
+    alternatives
+        (
+           id_product   number,
+           id_product_sub   number
         );
-insert into jl_alternatives 
-    select
-       rownum,
-       rownum+10
-     from all_objects where rownum <100;
+insert into alternatives select rownum, rownum+10 from all_objects where rownum <50000;
      commit;
-create unique index alt_i on jl_alternatives(id_product);
+drop index alt_i;
+create unique index alt_i on alternatives(id_product);
 
-create view v_alternatives as (
-	select  alt.id_product
-	FROM  jl_alternatives    alt
-      INNER JOIN jl_products prd2   ON prd2.id = alt.id_product_sub
-      INNER JOIN jl_suppliers sup2  ON sup2.id = prd2.id_supplier
+create or replace view v_alternatives as (
+        select  alt.id_product
+        FROM  alternatives    alt
+      INNER JOIN products prd2   ON prd2.id = alt.id_product_sub
+      INNER JOIN suppliers sup2  ON sup2.id = prd2.id_supplier
     WHERE    sup2.location != 'LEEDS');
 
-/*
+BEGIN DBMS_STATS.GATHER_TABLE_STATS(null,'SUPPLIERS'); END;
+/
+BEGIN DBMS_STATS.GATHER_TABLE_STATS(null,'PRODUCTS'); END;
+/
+BEGIN DBMS_STATS.GATHER_TABLE_STATS(null,'ORDERS'); END;
+/
+BEGIN DBMS_STATS.GATHER_TABLE_STATS(null,'ORDER_LINES'); END;
+/
+BEGIN DBMS_STATS.GATHER_TABLE_STATS(null,'CUSTOMERS'); END;
+/
+BEGIN DBMS_STATS.GATHER_TABLE_STATS(null,'ALTERNATIVES'); END;
+/
+
 SELECT order_line_data
-FROM           jl_customers cus
-    INNER JOIN jl_orders ord ON ord.id_customer = cus.id
-    INNER JOIN jl_order_lines orl ON orl.id_order = ord.id
-    INNER JOIN jl_products prd1 ON prd1.id = orl.id_product
-    INNER JOIN jl_suppliers sup1 ON sup1.id = prd1.id_supplier
+FROM           customers cus
+    INNER JOIN orders ord ON ord.id_customer = cus.id
+    INNER JOIN order_lines orl ON orl.id_order = ord.id
+    INNER JOIN products prd1 ON prd1.id = orl.id_product
+    INNER JOIN suppliers sup1 ON sup1.id = prd1.id_supplier
 WHERE   cus.location = 'LONDON'
-    AND ord.date_placed BETWEEN sysdate - 7 
+    AND ord.date_placed BETWEEN sysdate - 7
                         AND     sysdate
     AND sup1.location = 'LEEDS'
     AND EXISTS ( SELECT  NULL
-                 FROM  v_alternatives   
+                 FROM  alternatives    alt
+                       INNER JOIN     products prd2
+                         ON prd2.id = alt.id_product_sub
+                       INNER JOIN     suppliers sup2
+                         ON sup2.id = prd2.id_supplier
                  WHERE    alt.id_product = prd1.id
-	);
-*/
+                       AND sup2.location != 'LEEDS' )
+        ;
+
