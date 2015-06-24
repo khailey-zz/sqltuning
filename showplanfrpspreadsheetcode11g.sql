@@ -1,3 +1,9 @@
+et pagesize 0
+set linesize 1000
+set trims on
+
+spool kmo.sql
+
 --
 -- script buy Keavin Meade
 -- see book "Oracle SQL Performance Tuning and Optimization: It's all about the Cardinalities"
@@ -199,6 +205,8 @@ ID    TABLE_NAME      NUM_ROWS   ROWCOUNT Cardinality Cardinality    FRP
 5 rows selected.
 */
 
+spool off
+set pagesize 100
 
 
 
